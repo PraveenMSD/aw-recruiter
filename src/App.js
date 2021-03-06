@@ -1,25 +1,36 @@
-import logo from './logo.svg';
+import React, { useState, useEffect } from 'react';
+
+import { BrowserRouter as Router, Route } from 'react-router-dom';
+
+import fireApp from './services/base';
+import { AuthProvider } from './services/auth';
 import './App.css';
+import PrivateRoute from './routes/PrivateRoute';
+
+import HomePage from './pages/Home/home';
+import LoginPage from './pages/Login/login';
+import SignUpPage from './pages/SignUp/signup';
 
 function App() {
+  const [isFirebaseInitialized, setFirebaseInitialized] = useState(false)
+
+  useEffect(() => {
+    fireApp.isInitialized().then(val => {
+      setFirebaseInitialized(val)
+    })
+  })
+
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
-  );
+    <AuthProvider>
+      <Router>
+        <div>
+          <PrivateRoute exact path="/" component={HomePage} />
+          <Route exact path="/login" component={LoginPage} />
+          <Route exact path="/signup" component={SignUpPage} />
+        </div>
+      </Router>
+    </AuthProvider>
+    );
 }
 
 export default App;
